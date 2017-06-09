@@ -1,0 +1,4 @@
+# Install Active Directory Domain Service
+Install-WindowsFeature AD-Domain-Services -IncludeAllSubFeature -IncludeManagementTools
+
+# 
