@@ -1,0 +1,21 @@
+
+Function Get-SerialNumber {
+
+Param (
+    [Parameter(Mandatory=$True,ValueFromPipeline=$True,ValueFromPipelineByPropertyName=$True)][String]$ComputerName
+)
+
+Get-WmiObject -Class win32_bios -ComputerName $ComputerName | Select-Object __Server,SerialNumber
+
+}
+
+if(Test-Path -Path C:\PS\OfflineSystems.txt)
+{Remove-Item C:\PS\OfflineSystems.txt -Force}
+
+$Systems = Get-Content C:\PS\Systems.txt
+foreach ($System in $Systems) {
+
+Try {Get-SerialNumber -ComputerName $System -ErrorAction Stop}
+Catch {$System >> c:\PS\OfflineSystems.txt}
+
+}
