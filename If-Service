@@ -1,0 +1,19 @@
+# Check a service exists and running
+
+Function If-Service {
+
+Param (
+    [Parameter(Mandatory=$True)][String]$Name,
+    [Parameter(Mandatory=$True)][String]$ComputerName
+)
+
+$Result = $False
+$Services = Get-Service -ComputerName $ComputerName
+    Foreach ($Service in $Services) {
+        If ($Service.Name -eq $Name -and $Service.Status -eq "Running") {
+        $Result = $True
+        Break
+        }
+    }
+Return $Result
+}
