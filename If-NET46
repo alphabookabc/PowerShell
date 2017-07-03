@@ -1,0 +1,27 @@
+Function Get-Software {
+
+Get-WmiObject -Class Win32_Product | Select-Object Name | Sort-Object Name
+
+}
+
+Function If-NET46 {
+
+Param (
+    [Parameter(Mandatory=$True,ValueFromPipeline=$True,ValueFromPipelineByPropertyName=$True)][String]$ComputerName
+)
+
+$Installed = $False
+
+$Softwares = Get-Software -ComputerName $ComputerName
+
+    Foreach ($Software in $Softwares) {
+        If ($Software.Name -eq "Microsoft .NET Framework 4.6.11") {
+        $Installed = $True
+        Break
+        }
+    
+    }
+    
+    Return $Installed
+
+}
