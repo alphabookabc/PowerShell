@@ -1,0 +1,18 @@
+$Body = @"
+Dear colleague,
+
+Nice to meet you.
+
+Thanks and best regards,
+Terry Shen
+"@
+
+$Email = @{
+From = "tshen@alphabook.cn"
+To = "tshen@alphabook.cn"
+Subject = "Hello Word"
+Body = $Body
+SMTPServer = "smtp.alphabook.cn"
+}
+
+Send-MailMessage @Email
