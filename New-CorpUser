@@ -15,11 +15,11 @@ $User = @{
 	Title = “System Engineer”
 	Department = “IT”
 	Manager = “Peter.Li”
-    Enable = $True
+    	Enable = $True
 	}
 New-ADUser @User
 
-# Create a AD user with PowerShell exmaple 1
+# Create a AD user with PowerShell exmaple 2
 New-ADUser -GivenName = “Terry” `
 -Surname = “Shen” `
 -Name = “Terry Shen” `
