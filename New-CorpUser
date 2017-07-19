@@ -1,0 +1,38 @@
+# Create a AD user with PowerShell exmaple 1
+$User = @{
+	GivenName = “Terry”
+	Surname = “Shen”
+	Name = “Terry Shen”
+	DisplayName = “Terry Shen”
+	SamAccountName = “Terry.Shen”
+	UserPrincipalName = “Terry.Shen@corp.alphabook.cn”
+	AccountPassword = (ConvertTo-SecureString "123.com" -AsPlainText -Force)
+	ChangePasswordAtLogon = $True
+	Office = “Wudaokou, Haidian”
+	OfficePhone = “010-12345678”
+	City = “Beijing”
+	Country = “CN”
+	Title = “System Engineer”
+	Department = “IT”
+	Manager = “Peter.Li”
+    Enable = $True
+	}
+New-ADUser @User
+
+# Create a AD user with PowerShell exmaple 1
+New-ADUser -GivenName = “Terry” `
+-Surname = “Shen” `
+-Name = “Terry Shen” `
+-DisplayName = “Terry Shen” `
+-SamAccountName = “Terry.Shen” `
+-UserPrincipalName = “Terry.Shen@corp.alphabook.cn” `
+-AccountPassword = (ConvertTo-SecureString "123.com" -AsPlainText -Force) `
+-ChangePasswordAtLogon = $True `
+-Office = “Wudaokou, Haidian” `
+-OfficePhone = “010-12345678” `
+-City = “Beijing” `
+-Country = “CN” `
+-Title = “System Engineer” `
+-Department = “IT” `
+-Manager = “Peter.Li” `
+-Enable = $True
