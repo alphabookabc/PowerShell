@@ -6,10 +6,10 @@ Import-Module ADDSDeployment
 Install-ADDSForest `
 -CreateDnsDelegation:$false `
 -DatabasePath "C:\Windows\NTDS" `
--DomainMode "Win2012R2" `
--DomainName "alphabook.com.cn" `
+-DomainMode "Win2016" `
+-DomainName "corp.alphabook.cn" `
 -DomainNetbiosName "ALPHABOOK" `
--ForestMode "Win2012R2" `
+-ForestMode "Win2016" `
 -InstallDns:$true `
 -LogPath "C:\Windows\NTDS" `
 -NoRebootOnCompletion:$false `
