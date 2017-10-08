@@ -1,0 +1,27 @@
+
+$Users = Import-Csv -Path "C:\Users\Administrator\Desktop\Alphabook Demo Users.csv"
+
+foreach ($User in $Users) {
+
+$CorpUser = @{
+	GivenName = $User.GivenName
+	Surname = $User.Surname
+	Name = $User.Name
+	DisplayName = $User.DisplayName
+	SamAccountName = $User.SamAccountName
+	UserPrincipalName = $User.UserPrincipalName
+	AccountPassword = (ConvertTo-SecureString "123.com" -AsPlainText -Force)
+	Office = $User.Office
+	OfficePhone = $User.OfficePhone
+	City = $User.City
+	Country = $User.Country
+	Title = $User.Title
+	Department = $User.Department
+	Manager = $User.Manager
+  Enable = $True
+  Path = 'OU=CorpUsers,DC=corp,DC=alphabook,DC=cn'
+	}
+
+New-ADUser @CorpUser
+
+}
