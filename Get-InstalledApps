@@ -1,0 +1,2 @@
+# To get the installed softwares on a Windows x64 system
+Get-ItemProperty -path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*,HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\* | Select-Object DisplayName,DisplayVersion,Publisher | ConvertTo-Html | Out-File C:\Apps.html
