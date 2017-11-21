@@ -1,0 +1,26 @@
+$Users = Get-ADUser -Filter {Department -eq "IT"} -Properties *
+
+foreach ($User in $Users) {
+
+$UserName = $User.Name
+
+$Body = @"
+Dear $UserName
+
+Welcome to IT team.
+
+Thanks and best regards,
+Great IT Team
+"@
+
+$Email = @{
+From = "administrator@alphabook.cn"
+To = $User.mail
+Subject = "Hello Word"
+Body = $Body
+SMTPServer = "mail.alphabook.cn"
+}
+
+Send-MailMessage @Email
+
+}
