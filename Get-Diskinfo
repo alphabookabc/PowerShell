@@ -1,8 +1,8 @@
 
 Function Get-Diskinfo {
 Param (
-    [Parameter(Mandatory=$True,ValueFromPipeline=$True,ValueFromPipelineByPropertyName=$True)][String]$ComputerName
+    [Parameter(Mandatory=$True,ValueFromPipeline=$True,ValueFromPipelineByPropertyName=$True)][String[]]$ComputerName
 )
-Get-WmiObject -class win32_logicaldisk | Select-Object DeviceID,@{Name='FreeSpace (G)';Expression={$_.FreeSpace/1GB -as [int]}},@{Name='TotalSpace (G)';Expression={$_.Size/1GB -as [int]}},@{Name='Free (%)';Expression={$_.FreeSpace/$_.Size*100 -as [int]}}
+Get-WmiObject -class win32_logicaldisk -ComputerName $ComputerName | Select-Object DeviceID,@{Name='FreeSpace (G)';Expression={$_.FreeSpace/1GB -as [int]}},@{Name='TotalSpace (G)';Expression={$_.Size/1GB -as [int]}},@{Name='Free (%)';Expression={$_.FreeSpace/$_.Size*100 -as [int]}}
 }
 Get-Diskinfo -ComputerName Localhost
