@@ -1,0 +1,51 @@
+$Servers = Get-Content -Path "D:\Scripts\ServerMonitor\ServerList.txt"
+$DiskinfoHtml = "D:\Scripts\ServerMonitor\Diskinfo.html"
+$Diskinfo = @()
+$ErrorServers = @()
+
+Function Get-Diskinfo {
+Param (
+    [Parameter(Mandatory=$True,ValueFromPipeline=$True,ValueFromPipelineByPropertyName=$True)][String[]]$ComputerName
+    )
+Get-WmiObject -Class win32_logicaldisk -ComputerName $ComputerName `
+| Select-Object @{Name='ServerName';Expression={$_.PSComputerName}}, `
+@{Name='Disk';Expression={$_.DeviceID}}, `
+@{Name='Space(GB)';Expression={$_.Size/1GB -as [int]}}, `
+@{Name='Free(GB)';Expression={$_.FreeSpace/1GB -as [int]}}, `
+@{Name='FreePercent';Expression={($_.FreeSpace/$_.Size*100 -as [int]).ToString() +"%"}}
+}
+
+Foreach ($Server in $Servers) {
+
+    Try {$Diskinfo += Get-Diskinfo -ComputerName $Server -ErrorAction Stop}
+
+    Catch {
+    $Server = $Server + "<br>"
+    $ErrorServers += $Server
+    }
+
+}
+
+$Diskinfo = $Diskinfo | Sort-Object FreePercent
+
+$Css="<style>table{margin:auto; width:70%}
+Body{Text-align:Center;}
+th{background-color:black; color:white;}
+td{background-color:orange; color:Black; Text-align:Center;} </style>"
+
+$PreContent = "<h2>Please review daily server disk usage report and take action accordingly.</h2>"
+$PostContent = "<br><h3>Servers in communication error:</h3> <font color=red>$ErrorServers</font color>"
+
+$Diskinfo | ConvertTo-Html -Body $Css -PreContent $PreContent -PostContent $PostContent | Out-File -FilePath $DiskinfoHtml
+$Body = Get-Content -Path $DiskinfoHtml -Raw
+
+$Email = @{
+From = "administrator@alphabook.cn"
+To = "administrator@alphabook.cn"
+Subject = "Daily Server Disk Usage Report"
+Body = $Body
+SMTPServer = "mail.alphabook.cn"
+Priority = "High"
+}
+
+Send-MailMessage @Email -BodyAsHtml
