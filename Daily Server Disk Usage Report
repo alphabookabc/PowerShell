@@ -16,14 +16,11 @@ Get-WmiObject -Class win32_logicaldisk -ComputerName $ComputerName `
 }
 
 Foreach ($Server in $Servers) {
-
     Try {$Diskinfo += Get-Diskinfo -ComputerName $Server -ErrorAction Stop}
-
     Catch {
     $Server = $Server + "<br>"
     $ErrorServers += $Server
     }
-
 }
 
 $Diskinfo = $Diskinfo | Sort-Object FreePercent
