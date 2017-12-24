@@ -1,0 +1,58 @@
+$SysteminfoHtml = "D:\Scripts\SystemInfo\Systeminfo.Html"
+
+$HostName = (Get-CimInstance -ClassName Win32_ComputerSystem).Name
+$OS = Get-CimInstance -ClassName Win32_OperatingSystem | Select-Object @{Name="OS";Expression={$_.Caption}},Version,OSArchitecture,InstallDate
+$OSInstalled = (Get-CimInstance -ClassName Win32_OperatingSystem).InstallDate
+
+$ComputerSystem = Get-CimInstance -ClassName Win32_ComputerSystem | Select-Object Manufacturer,SystemFamily,SystemSKUNumber,Model
+
+$BIOS = Get-CimInstance -ClassName Win32_BIOS | Select-Object @{Name="BIOS";Expression={$_.Manufacturer}},Version,SerialNumber,ReleaseDate
+
+$CPU = Get-CimInstance -ClassName Win32_Processor `
+| Select-Object @{Name="CPU";Expression={$_.Name}}, `
+@{Name="Cores";Expression={$_.NumberofCores}}, `
+@{Name="Processors";Expression={$_.NumberOfLogicalProcessors}}, `
+@{Name="L3";Expression={($_.L3CacheSize/1024).ToString() + "MB"}}
+
+$Memory = Get-CimInstance -ClassName Win32_PhysicalMemory `
+| Select-Object @{Name="Memory";Expression={$_.Manufacturer}}, PartNumber, `
+@{Name="Capacity";Expression={($_.Capacity / 1Gb -as [Int]).ToString() + " GB"}}, `
+@{Name="Speed";Expression={($_.Speed / 1000).ToString() + "GHz"}}
+
+$HardDisk = Get-PhysicalDisk | Select-Object @{Name="Hard Disk";Expression={$_.Model}},MediaType,@{Name="Size(GB)";Expression={$_.Size / 1Gb -as [Int]}},HealthStatus
+
+$LogicalDisk = Get-CimInstance -ClassName Win32_LogicalDisk `
+| Select-Object @{Name="Logical Disk";Expression={$_.DeviceID}}, `
+@{Name="Size(GB)";Expression={$_.Size / 1Gb -as [Int]}}, `
+@{Name="Free(GB)";Expression={$_.FreeSpace / 1Gb -as [Int]}}, `
+@{Name='FreePercent';Expression={($_.FreeSpace/$_.Size*100 -as [int]).ToString() +"%"}}
+
+$Apps = Get-ItemProperty -path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*,HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\* | Select-Object DisplayName,DisplayVersion,Publisher,InstallDate | Where-Object {$_.Publisher -ne $null} | Sort-Object Publisher,InstallDate
+
+$Css="<style>
+table{width:75%; text-align:center;}
+th{background-color:orangered; color:black; width:25%;}
+td{background-color:deepskyblue; color:white;}
+</style>"
+
+$ComputerSystem | ConvertTo-Html -Head "<h2> System information on computer: <font color=DarkGreen> $HostName</font> <h2>" -Body $Css -PreContent "<h3>Hardware</h3>" | Out-File -FilePath $SysteminfoHtml
+$BIOS | ConvertTo-Html -Body $Css | Out-File -FilePath $SysteminfoHtml -Append
+$CPU | ConvertTo-Html -Body $Css | Out-File -FilePath $SysteminfoHtml -Append
+$Memory | ConvertTo-Html -Body $Css | Out-File -FilePath $SysteminfoHtml -Append
+$HardDisk | ConvertTo-Html -Body $Css | Out-File -FilePath $SysteminfoHtml -Append
+$OS | ConvertTo-Html -PreContent "<h3>Operation System</h3>" -Body $Css | Out-File -FilePath $SysteminfoHtml -Append
+$LogicalDisk | ConvertTo-Html -Body $Css | Out-File -FilePath $SysteminfoHtml -Append
+$Apps | ConvertTo-Html  -PreContent "<h3>Installed Applications</h3>" -Body $Css -PostContent "<br><i><h4>Corporation IT Group</h4></i>" | Out-File -FilePath $SysteminfoHtml -Append
+
+$Body = Get-Content -Path $SysteminfoHtml -Raw
+
+$Email = @{
+From = "administrator@alphabook.cn"
+To = "administrator@alphabook.cn"
+Subject = "System Information Report"
+Body = $Body
+SMTPServer = "mail.alphabook.cn"
+Priority = "High"
+}
+
+Send-MailMessage @Email -BodyAsHtml -Encoding utf8
