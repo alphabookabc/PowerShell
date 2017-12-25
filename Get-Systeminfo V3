@@ -29,11 +29,13 @@ $LogicalDisk = Get-CimInstance -ClassName Win32_LogicalDisk `
 
 $Apps = Get-ItemProperty -path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*,HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\* | Select-Object DisplayName,DisplayVersion,Publisher,InstallDate | Where-Object {$_.Publisher -ne $null} | Sort-Object Publisher,InstallDate
 
-$Css="<style>
+$Css=@"
+<style>
 table{width:75%; text-align:center;}
 th{background-color:orangered; color:black; width:25%;}
 td{background-color:deepskyblue; color:white;}
-</style>"
+</style>
+"@
 
 $ComputerSystem | ConvertTo-Html -Head "<h2> System information on computer: <font color=DarkGreen> $HostName</font> <h2>" -Body $Css -PreContent "<h3>Hardware</h3>" | Out-File -FilePath $SysteminfoHtml
 $BIOS | ConvertTo-Html -Body $Css | Out-File -FilePath $SysteminfoHtml -Append
