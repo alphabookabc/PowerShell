@@ -1,18 +1,21 @@
-$Body = @"
-Dear colleague,
+$UserName = "Alex Zhong"
+$UserEmail = "Alex.Zhong@alphabook.cn"
 
-Nice to meet you.
+$Body = @"
+Dear $UserName
+
+Welcome to join abc company.
 
 Thanks and best regards,
-Terry Shen
+Corporation IT Team
 "@
 
 $Email = @{
-From = "tshen@alphabook.cn"
-To = "tshen@alphabook.cn"
-Subject = "Hello Word"
+From = "ITsupport@alphabook.cn"
+To = $UserEmail
+Subject = "Welcome letter"
 Body = $Body
 SMTPServer = "smtp.alphabook.cn"
 }
 
-Send-MailMessage @Email
+Send-MailMessage @Email -Encoding utf8
