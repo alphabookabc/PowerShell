@@ -1,0 +1,21 @@
+$Date = Get-Date -Format yyyyMMdd
+$LogFile = $env:TEMP + "\Log" + $Date + ".html"
+
+$Css = @"
+<style>
+table{width: 99%; text-align: left; vertical-align: center; border-collapse: collapse;}
+th{background: yellowgreen; color: white;}
+td{max-width: 700px; word-wrap: break-word;}
+tbody{color: black;}
+table tbody tr:nth-child(odd){background:whitesmoke;}
+table tbody tr:nth-child(even){background: lightgray;}       
+table,th,td{border: 1px solid black;}
+</style>
+"@
+
+$SysLog = Get-EventLog -LogName System -Newest 100 | Select-Object MachineName,TimeGenerated,EntryType,EventID,Message,Source
+$AppLog = Get-EventLog -LogName Application -Newest 100 | Select-Object MachineName,TimeGenerated,EntryType,EventID,Message,Source
+$SysLog | ConvertTo-Html -PreContent "<h1>Newest 100 system log</h1>" -Body $Css | Out-File -FilePath $LogFile -Encoding utf8
+$AppLog | ConvertTo-Html -PreContent "<h1>Newest 100 application log</h1>" -Body $Css | Out-File -FilePath $LogFile -Encoding utf8 -Append
+
+Invoke-Item -Path $LogFile
