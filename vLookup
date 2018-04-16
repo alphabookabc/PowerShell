@@ -1,0 +1,24 @@
+$Items = Import-Csv .\Data01.csv
+$Referances = Import-Csv .\Data02.csv
+$Data = @()
+
+foreach ($Item in $Items) {
+
+If ($Referances.ID -contains $Item.ID) {
+
+    foreach ($Referance in $Referances) {
+    
+        if ($Item.ID -match $Referance.ID) {
+        $Data += $Referance.City
+        break
+        }
+
+    }
+
+}
+
+else {$Data += "null"}
+
+}
+
+$Data
